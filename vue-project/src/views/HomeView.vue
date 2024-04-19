@@ -4,9 +4,17 @@ import { ref,  } from 'vue';
 import {onBeforeMount} from 'vue';
 import supabase from "../config/supabaseClient"
 
-const home = () => {
+const Home = () => {
   console.log(home, supabase)
+
+return (
+  <div className= "page-view">
+    <h2> home</h2>
+  </div>
+)
 }
+export default Home
+
 const thing = ref('')
 async function thingy () {
   try {
