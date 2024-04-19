@@ -2,7 +2,11 @@
 import TheWelcome from '../components/TheWelcome.vue'
 import { ref,  } from 'vue';
 import {onBeforeMount} from 'vue';
+import supabase from "../config/supabaseClient"
 
+const home = () => {
+  console.log(home, supabase)
+}
 const thing = ref('')
 async function thingy () {
   try {
