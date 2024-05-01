@@ -13,8 +13,6 @@ return (
   </div>
 )
 }
-export default Home
-
 const thing = ref('')
 async function thingy () {
   try {
@@ -37,4 +35,4 @@ onBeforeMount(() =>{
   <main>
     <TheWelcome />
   </main>
-</template>l
+</template>
