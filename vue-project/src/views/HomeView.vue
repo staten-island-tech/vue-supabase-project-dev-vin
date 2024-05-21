@@ -1,32 +1,4 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
-import { ref,  } from 'vue';
-import {onBeforeMount} from 'vue';
-import supabase from "../config/supabaseClient"
-
-const Home = () => {
-  console.log(home, supabase)
-
-return (
-  <div className= "page-view">
-    <h2> home</h2>
-  </div>
-)
-}
-const thing = ref('')
-async function thingy () {
-  try {
-  let fetchthing = await fetch ("https://data.cityofnewyork.us/resource/pitm-atqc.json")
-  let putasjson = await fetchthing.json();
-  thing.value = putasjson;
-  console.log(putasjson)
-}  
-catch (error) {
-  console.log ("error", error)
-}}
-onBeforeMount(() =>{
-    thingy();
-})
 
 </script>
 
