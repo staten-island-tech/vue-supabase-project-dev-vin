@@ -21,6 +21,15 @@ const handleLogin = async () => {
     loading.value = false
   }
 }
+fetch('https://tmxqadpedqwefqeguqry.supabase.co/rest/v1/profiles?select=username,website,avatar_url&id=eq.e1d647d1-7846-418b-ad61-3536802a42a6', {
+  headers: {
+    'Accept': 'application/json'
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));
+
 </script>
 
 <template>
