@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router' // Import useRoute from vue-router
 import Account from './components/Account.vue'
 import Auth from './components/Auth.vue'
 import MemePostForm from './components/MemePostForm.vue'
@@ -33,5 +34,4 @@ onMounted(() => {
 </template>
 
 <style>
-
 </style>

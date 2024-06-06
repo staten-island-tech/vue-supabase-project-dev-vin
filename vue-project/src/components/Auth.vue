@@ -2,93 +2,96 @@
   <div>
     <form @submit.prevent="handleSubmit">
       <input v-model="email" type="email" placeholder="Email" required />
-      <input
-        v-model="password"
-        type="password"
-        placeholder="Password"
-        required
-      />
-      <button type="submit">{{ isSignIn ? 'Sign In' : 'Sign Up' }}</button>
+      <input v-model="password" type="password" placeholder="Password" required />
+      <button type="submit">Sign In</button>
       <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
     </form>
     <p>
-      <a href="#" @click.prevent="toggleAuthMode">
-        {{ isSignIn ? "Don't have an account? Sign Up" : "Already have an account? Sign In" }}
-      </a>
+      <router-link to="/signup">Don't have an account? Sign Up</router-link>
     </p>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { supabase } from "../supabase"; 
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { supabase } from '../supabase'; 
 
+const router = useRouter();
 const email = ref("");
 const password = ref("");
 const errorMessage = ref("");
 const isSignIn = ref(true);
 const lastRequestTime = ref(0);
-const rateLimitDuration = 60000; 
+const rateLimitDuration = 60000; // 60 seconds
 
 const toggleAuthMode = () => {
   isSignIn.value = !isSignIn.value;
   errorMessage.value = "";
-  console.log("Toggled auth mode. isSignIn:", isSignIn.value);
 };
 
 const handleSubmit = async () => {
   const currentTime = Date.now();
+  console.log("Current Time:", currentTime, "Last Request Time:", lastRequestTime.value);
+  
   if (currentTime - lastRequestTime.value < rateLimitDuration) {
     errorMessage.value = "Please wait before trying again.";
     return;
   }
 
-  lastRequestTime.value = currentTime;
-
   if (isSignIn.value) {
-    await signIn();
+    const success = await signIn();
+    if (success) lastRequestTime.value = currentTime;
   } else {
-    await signUp();
+    const success = await signUp();
+    if (success) lastRequestTime.value = currentTime;
   }
 };
 
 const signIn = async () => {
   try {
     console.log("Attempting to sign in...");
-    const { user, error } = await supabase.auth.signIn({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: email.value,
       password: password.value,
     });
     if (error) {
       console.error("Error signing in:", error.message);
       errorMessage.value = "Invalid email or password. Please try again.";
+      return false;
     } else {
       errorMessage.value = "";
-      console.log("Sign in successful:", user);
+      console.log("Sign in successful:", data.user);
+      // Redirect or handle successful sign-in
+      return true;
     }
   } catch (error) {
     console.error("Unhandled error during sign-in:", error);
     errorMessage.value = "An unexpected error occurred. Please try again later.";
+    return false;
   }
 };
 
 const signUp = async () => {
   try {
     console.log("Attempting to sign up...");
-    const { user, error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
     });
     if (error) {
       console.error("Error signing up:", error.message);
       errorMessage.value = error.message;
+      return false;
     } else {
       errorMessage.value = "";
-      console.log("Sign up successful:", user);
+      console.log("Sign up successful:", data.user);
+      return true;
     }
   } catch (error) {
     console.error("Unhandled error during sign-up:", error);
     errorMessage.value = "An unexpected error occurred. Please try again later.";
+    return false;
   }
 };
 </script>
