@@ -2,7 +2,7 @@
   <div>
     <h2>Latest Memes</h2>
     <div v-if="memes.length === 0">No memes found.</div>
-    <div v-else>
+    <div v-else class="meme-grid">
       <div v-for="meme in memes" :key="meme.id" class="meme">
         <h3>{{ meme.title }}</h3>
         <p>{{ meme.description }}</p>
@@ -50,11 +50,17 @@ export default {
 </script>
 
 <style scoped>
+.meme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columns */
+  gap: 20px; /* Space between grid items */
+}
+
 .meme {
   border: 1px solid #ccc;
   padding: 16px;
-  margin-bottom: 16px;
 }
+
 .meme img {
   max-width: 100%;
   height: auto;
