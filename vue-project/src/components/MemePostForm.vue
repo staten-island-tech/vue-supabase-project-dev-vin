@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>Post a Meme</h2>
+    <h2>Post a Meme (please refresh after posting)</h2>
     <form @submit.prevent="submitMeme">
       <input type="text" v-model="title" placeholder="Title" required />
       <textarea v-model="description" placeholder="Description" required></textarea>
@@ -20,7 +20,6 @@ const fileUrl = ref('');
 
 const submitMeme = async () => {
   try {
-    // Check if the user is authenticated
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     if (sessionError || !session) {
       throw new Error('User not logged in. Please log in to post a meme.');
@@ -35,7 +34,7 @@ const submitMeme = async () => {
         description: description.value,
         file_url: fileUrl.value,
         created_at: new Date(),
-        user_id: session.user.id  // Ensure the user_id is added to the row
+        user_id: session.user.id
       }]);
 
     if (memeError) throw memeError;
@@ -44,6 +43,10 @@ const submitMeme = async () => {
     title.value = '';
     description.value = '';
     fileUrl.value = '';
+
+    // Emit an event to inform the parent component that a new meme has been posted
+    emit('memePosted');
+
   } catch (error) {
     console.error('Error posting meme:', error);
   }

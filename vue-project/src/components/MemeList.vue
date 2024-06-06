@@ -59,6 +59,8 @@ export default {
 .meme {
   border: 1px solid #ccc;
   padding: 16px;
+  align-items: center; /* Center items horizontally */
+  text-align: center;
 }
 
 .meme img {
