@@ -21,14 +21,14 @@
 
 <script setup>
 import { ref } from "vue";
-import { supabase } from "../supabase"; // Correct import path
+import { supabase } from "../supabase"; 
 
 const email = ref("");
 const password = ref("");
 const errorMessage = ref("");
 const isSignIn = ref(true);
 const lastRequestTime = ref(0);
-const rateLimitDuration = 60000; // 60 seconds
+const rateLimitDuration = 60000; 
 
 const toggleAuthMode = () => {
   isSignIn.value = !isSignIn.value;
@@ -63,7 +63,6 @@ const signIn = async () => {
       console.error("Error signing in:", error.message);
       errorMessage.value = "Invalid email or password. Please try again.";
     } else {
-      // Clear error message if sign-in succeeds
       errorMessage.value = "";
       console.log("Sign in successful:", user);
     }
@@ -84,7 +83,6 @@ const signUp = async () => {
       console.error("Error signing up:", error.message);
       errorMessage.value = error.message;
     } else {
-      // Clear error message if sign-up succeeds
       errorMessage.value = "";
       console.log("Sign up successful:", user);
     }
