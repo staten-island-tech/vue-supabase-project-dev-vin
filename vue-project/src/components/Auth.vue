@@ -3,11 +3,13 @@
     <form @submit.prevent="handleSubmit">
       <input v-model="email" type="email" placeholder="Email" required />
       <input v-model="password" type="password" placeholder="Password" required />
-      <button type="submit">Sign In</button>
+      <button type="submit">{{ isSignIn ? 'Sign In' : 'Sign Up' }}</button>
       <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
     </form>
     <p>
-      <router-link to="/signup">Don't have an account? Sign Up</router-link>
+      <button @click="toggleAuthMode">
+        {{ isSignIn ? "Don't have an account? Sign Up" : "Already have an account? Sign In" }}
+      </button>
     </p>
   </div>
 </template>
@@ -15,7 +17,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { supabase } from '../supabase'; 
+import { supabase } from '../supabase';
 
 const router = useRouter();
 const email = ref("");
@@ -23,7 +25,7 @@ const password = ref("");
 const errorMessage = ref("");
 const isSignIn = ref(true);
 const lastRequestTime = ref(0);
-const rateLimitDuration = 60000; // 60 seconds
+const rateLimitDuration = 10000; // 10 seconds
 
 const toggleAuthMode = () => {
   isSignIn.value = !isSignIn.value;
@@ -86,6 +88,7 @@ const signUp = async () => {
     } else {
       errorMessage.value = "";
       console.log("Sign up successful:", data.user);
+      // Redirect or handle successful sign-up
       return true;
     }
   } catch (error) {
