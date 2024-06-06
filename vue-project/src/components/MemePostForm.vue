@@ -4,7 +4,7 @@
     <form @submit.prevent="submitMeme">
       <input type="text" v-model="title" placeholder="Title" required />
       <textarea v-model="description" placeholder="Description" required></textarea>
-      <input type="file" @change="handleFileChange" required />
+      <input type="text" v-model="fileUrl" placeholder="Image/GIF URL" required />
       <button type="submit">Post</button>
     </form>
   </div>
@@ -16,42 +16,24 @@ import { supabase } from '../supabase';
 
 const title = ref('');
 const description = ref('');
-const file = ref(null);
-
-const handleFileChange = (event) => {
-  file.value = event.target.files[0];
-};
+const fileUrl = ref('');
 
 const submitMeme = async () => {
   try {
     // Check if the user is authenticated
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
       throw new Error('User not logged in. Please log in to post a meme.');
     }
 
-    if (!file.value) throw new Error('No file selected. Select an image/gif.');
-
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('memes')
-      .upload(`public/${file.value.name}`, file.value);
-
-    if (uploadError) throw uploadError;
-
-    const { publicURL, error: publicUrlError } = supabase.storage
-      .from('memes')
-      .getPublicUrl(`public/${file.value.name}`);
-
-    if (publicUrlError) throw publicUrlError;
-
-    const fileUrl = publicURL;
+    if (!fileUrl.value) throw new Error('No URL provided. Please provide an image/GIF URL.');
 
     const { data: memeData, error: memeError } = await supabase
       .from('memes')
       .insert([{
         title: title.value,
         description: description.value,
-        file_url: fileUrl,
+        file_url: fileUrl.value,
         created_at: new Date(),
         user_id: session.user.id  // Ensure the user_id is added to the row
       }]);
@@ -61,7 +43,7 @@ const submitMeme = async () => {
     console.log('Meme posted:', memeData);
     title.value = '';
     description.value = '';
-    file.value = null;
+    fileUrl.value = '';
   } catch (error) {
     console.error('Error posting meme:', error);
   }
