@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{ isEditMode ? 'Edit Meme' : 'Post a Meme' }}</h2>
+    <h2>{{ isEditMode ? 'Edit Meme' : 'Post a Meme (please refresh after posting)' }}</h2>
     <form @submit.prevent="submitMeme">
       <input type="text" v-model="title" placeholder="Title" required />
       <textarea v-model="description" placeholder="Description" required></textarea>
