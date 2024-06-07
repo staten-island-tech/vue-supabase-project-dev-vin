@@ -1,23 +1,23 @@
 <template>
-  <div>
+  <div class="meme-list-container">
     <h2>Latest Memes</h2>
     <div v-if="memes.length === 0">No memes found.</div>
     <div v-else class="meme-grid">
       <div v-for="meme in memes" :key="meme.id" class="meme">
         <h3>{{ meme.title }}</h3>
         <p>{{ meme.description }}</p>
-        <img :src="meme.file_url" alt="Meme" />
+        <img :src="meme.file_url" alt="Meme" class="meme-image" />
         <p>Posted by: {{ getUserEmail(meme.user_id) }} at: {{ formatDate(meme.created_at) }}</p>
-        <button @click="editMeme(meme)">Edit</button>
-        <button @click="deleteMeme(meme.id)">Delete</button>
+        <button @click="editMeme(meme.id)" class="meme-button">{{ editingMemeId === meme.id ? 'Cancel' : 'Edit' }}</button>
+        <button @click="deleteMeme(meme.id)" class="meme-button">Delete</button>
+        <MemePostForm
+          v-if="editingMemeId === meme.id"
+          :meme="meme"
+          :isEditMode="true"
+          @memeUpdated="handleMemeUpdated"
+        />
       </div>
     </div>
-    <MemePostForm
-      v-if="selectedMeme"
-      :meme="selectedMeme"
-      :isEditMode="true"
-      @memeUpdated="handleMemeUpdated"
-    />
   </div>
 </template>
 
@@ -33,7 +33,7 @@ export default {
   setup() {
     const memes = ref([]);
     const users = ref({});
-    const selectedMeme = ref(null);
+    const editingMemeId = ref(null);
 
     const fetchMemes = async () => {
       try {
@@ -47,7 +47,6 @@ export default {
         }
         memes.value = data;
 
-
         const userIds = [...new Set(data.map(meme => meme.user_id))];
         for (const userId of userIds) {
           const { data: userData, error: userError } = await supabase
@@ -57,7 +56,6 @@ export default {
             .single();
 
           if (userData) {
-
             users.value[userId] = userData.email;
           }
         }
@@ -86,31 +84,38 @@ export default {
         if (error) {
           throw error;
         }
-
-
         memes.value = memes.value.filter(meme => meme.id !== memeId);
       } catch (error) {
         console.error('Error deleting meme:', error.message || error);
       }
     };
 
-    const editMeme = (meme) => {
-      selectedMeme.value = meme;
+    const editMeme = (memeId) => {
+      editingMemeId.value = editingMemeId.value === memeId ? null : memeId;
     };
 
     const handleMemeUpdated = () => {
-      selectedMeme.value = null;
+      editingMemeId.value = null;
       fetchMemes();
     };
 
     onMounted(fetchMemes);
 
-    return { memes, getUserEmail, formatDate, deleteMeme, editMeme, selectedMeme, handleMemeUpdated };
+    return { memes, getUserEmail, formatDate, deleteMeme, editMeme, editingMemeId, handleMemeUpdated };
   }
 };
 </script>
 
 <style scoped>
+.meme-list-container {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f5f5f5; 
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
 .meme-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -118,8 +123,42 @@ export default {
   justify-content: center;
 }
 
-.meme img {
-  max-width: 60%;
+.meme {
+  background: #fff; 
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.meme h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.meme p {
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.meme-image {
+  max-width: 100%;
   height: auto;
+  margin: 10px 0;
+}
+
+.meme-button {
+  margin: 5px;
+  padding: 10px;
+  font-size: 14px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.meme-button:hover {
+  background: #0056b3;
 }
 </style>

@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <h2>{{ isEditMode ? 'Edit Meme' : 'Post a Meme (please refresh after posting)' }}</h2>
+  <div class="meme-post-form">
+    <h2>{{ isEditMode ? 'Edit Meme' : 'Post a Meme (please refresh page after posting)' }}</h2>
     <form @submit.prevent="submitMeme">
-      <input type="text" v-model="title" placeholder="Title" required />
-      <textarea v-model="description" placeholder="Description" required></textarea>
-      <input type="text" v-model="fileUrl" placeholder="Image/GIF URL" required />
-      <button type="submit">{{ isEditMode ? 'Update' : 'Post' }}</button>
+      <input type="text" v-model="title" placeholder="Title" required class="form-input" />
+      <textarea v-model="description" placeholder="Description" required class="form-input"></textarea>
+      <input type="text" v-model="fileUrl" placeholder="Image/GIF URL" required class="form-input" />
+      <button type="submit" class="form-button">{{ isEditMode ? 'Update' : 'Post' }}</button>
     </form>
   </div>
 </template>
@@ -99,5 +99,36 @@ const updateMeme = async (userId) => {
 </script>
 
 <style scoped>
+.meme-post-form {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f5f5f5; 
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
+.form-input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff; 
+}
+
+.form-button {
+  padding: 10px;
+  font-size: 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-button:hover {
+  background: #0056b3;
+}
 </style>
+

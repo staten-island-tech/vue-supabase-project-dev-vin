@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <form @submit.prevent="handleSubmit">
-      <input v-model="email" type="email" placeholder="Email" required />
-      <input v-model="password" type="password" placeholder="Password" required />
-      <button type="submit">{{ isSignIn ? 'Sign In' : 'Sign Up' }}</button>
-      <p v-if="errorMessage" style="color: red">{{ errorMessage }}</p>
+  <div class="auth-container">
+    <form @submit.prevent="handleSubmit" class="auth-form">
+      <input v-model="email" type="email" placeholder="Email" required class="auth-input" />
+      <input v-model="password" type="password" placeholder="Password" required class="auth-input" />
+      <button type="submit" class="auth-button">{{ isSignIn ? 'Sign In' : 'Sign Up' }}</button>
+      <p v-if="errorMessage" class="auth-error">{{ errorMessage }}</p>
     </form>
     <p>
-      <button @click="toggleAuthMode">
+      <button @click="toggleAuthMode" class="auth-toggle">
         {{ isSignIn ? "Don't have an account? Sign Up" : "Already have an account? Sign In" }}
       </button>
     </p>
@@ -35,7 +35,7 @@ const toggleAuthMode = () => {
 const handleSubmit = async () => {
   const currentTime = Date.now();
   console.log("Current Time:", currentTime, "Last Request Time:", lastRequestTime.value);
-  
+
   if (currentTime - lastRequestTime.value < rateLimitDuration) {
     errorMessage.value = "Please wait before trying again.";
     return;
@@ -64,7 +64,7 @@ const signIn = async () => {
     } else {
       errorMessage.value = "";
       console.log("Sign in successful:", data.user);
-      // Redirect or handle successful sign-in
+
       return true;
     }
   } catch (error) {
@@ -88,7 +88,7 @@ const signUp = async () => {
     } else {
       errorMessage.value = "";
       console.log("Sign up successful:", data.user);
-      // Redirect or handle successful sign-up
+
       return true;
     }
   } catch (error) {
@@ -99,4 +99,57 @@ const signUp = async () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.auth-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f5f5f5; /* Light gray background */
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-input {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff; /* White background */
+}
+
+.auth-button {
+  padding: 10px;
+  font-size: 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.auth-button:hover {
+  background: #0056b3;
+}
+
+.auth-error {
+  color: red;
+  margin-top: 10px;
+}
+
+.auth-toggle {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.auth-toggle:hover {
+  text-decoration: underline;
+}
+</style>
